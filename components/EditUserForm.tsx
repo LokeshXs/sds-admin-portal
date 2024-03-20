@@ -18,11 +18,16 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import FormErrorComponent from "./FormErrorComponent";
 import FormSuccessComponent from "./FormSuccessComponent.";
-import { editUser } from "@/actions/createUser";
-import { Eye, EyeOff } from "lucide-react";
+import { deleteUser, editUser } from "@/actions/createUser";
+import { Eye, EyeOff, FilePenLine } from "lucide-react";
 import { TableUserData } from "@/app/(protected)/dashboard/users/columns";
-
-type EditUserType = {};
+import db from "@/lib/db";
+import { revalidatePath } from "next/cache";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export default function EditUserForm({
   userInfo,
@@ -39,9 +44,12 @@ export default function EditUserForm({
     },
   });
   const [isPending, startTransition] = useTransition();
+  const [isDeletePending, startDeleteTransition] = useTransition();
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [open, setOpen] = useState(false)
+ 
 
   const onSubmit = (values: z.infer<typeof editUserSchema>) => {
     setError("");
@@ -52,6 +60,24 @@ export default function EditUserForm({
       editUser(values).then((data) => {
         if (data?.status === "success") {
           setSuccess(data.message);
+          setOpen(false);
+        }
+        if (data?.status === "error") {
+          setError(data.message);
+        }
+      });
+    });
+  };
+
+  const deleteUserHandler = async () => {
+    setError("");
+    setSuccess("");
+
+    startDeleteTransition(() => {
+      deleteUser(userInfo.id).then((data) => {
+        if (data?.status === "success") {
+          setSuccess(data.message);
+          setOpen(false);
         }
         if (data?.status === "error") {
           setError(data.message);
@@ -61,6 +87,18 @@ export default function EditUserForm({
   };
 
   return (
+
+    <Dialog open={open} onOpenChange={setOpen}>
+    <DialogTrigger asChild>
+      <Button
+        variant="outline"
+        size="icon"
+        className="bg-primary border-none text-primary-foreground hover:bg-primary hover:text-primary-foreground"
+      >
+        <FilePenLine />
+      </Button>
+    </DialogTrigger>
+    <DialogContent className="sm:max-w-[425px]">
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8  ">
         <FormField
@@ -160,10 +198,18 @@ export default function EditUserForm({
             </FormItem>
           )}
         />
-        <div className="flex justify-center">
+        <div className="flex justify-center gap-4">
+          <Button
+            type="button"
+            className="px-8 text-lg max-sm:text-base bg-destructive hover:bg-destructive"
+            disabled={isDeletePending}
+            onClick={deleteUserHandler}
+          >
+            {isDeletePending ? "Deleting" : "Delete"}
+          </Button>
           <Button
             type="submit"
-            className="px-8 text-lg max-sm:text-base"
+            className="px-8 text-lg max-sm:text-base "
             disabled={isPending}
           >
             {isPending ? "Saving..." : "Save Changes"}
@@ -174,5 +220,7 @@ export default function EditUserForm({
         <FormSuccessComponent successMessage={success} />
       </form>
     </Form>
+    </DialogContent>
+        </Dialog>
   );
 }

@@ -3,26 +3,16 @@
 import { UserRole } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import {
-  MoreHorizontal,
   ArrowUpDown,
-  MoreHorizontalIcon,
   FilePenLine,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import db from "@/lib/db";
 import EditUserForm from "@/components/EditUserForm";
-
 
 export type TableUserData = {
   id: string;
@@ -56,6 +46,10 @@ export const columns: ColumnDef<TableUserData>[] = [
     header: "USERNAME",
   },
   {
+    accessorKey: "email",
+    header: "EMAIL",
+  },
+  {
     accessorKey: "role",
     header: "ROLE",
   },
@@ -75,14 +69,7 @@ export const columns: ColumnDef<TableUserData>[] = [
       const userinfo = row.original;
 
       return (
-        <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline" size="icon" className="bg-primary border-none text-primary-foreground hover:bg-primary hover:text-primary-foreground"><FilePenLine /></Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
         <EditUserForm userInfo={userinfo} />
-      </DialogContent>
-    </Dialog>
       );
     },
   },

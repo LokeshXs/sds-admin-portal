@@ -67,58 +67,75 @@ export default async function createUser(
 export async function editUser(values: z.infer<typeof editUserSchema>) {
   type EditUserType = z.infer<typeof editUserSchema>;
 
-  try{
+  try {
+    const validatedFields = editUserSchema.safeParse(values);
 
- 
-  const validatedFields = editUserSchema.safeParse(values);
+    if (!validatedFields.success) {
+      return {
+        status: "error",
+        message: "Invalid fields!",
+      };
+    }
 
-  if (!validatedFields.success) {
+    // 1.) if the field is empty remove
+    const withoutEmptyStrData: any = {};
+    Object.keys(validatedFields.data).map((key) => {
+      // console.log(validatedFields.data[key as keyof EditUserType]);
+      const value = validatedFields.data[key as keyof EditUserType];
+      if (value !== "") {
+        withoutEmptyStrData[key as keyof EditUserType] = value;
+      }
+    });
+
+    // 2.) hash the password if present
+    if (withoutEmptyStrData.password) {
+      const hashedPassword = await bcrypt.hash(
+        withoutEmptyStrData.password,
+        10
+      );
+
+      withoutEmptyStrData.password = hashedPassword;
+    }
+
+    // 2.) update the db
+
+    const updated = await db.user.update({
+      where: {
+        id: withoutEmptyStrData.id,
+      },
+      data: withoutEmptyStrData,
+    });
+
+    revalidatePath("/dashboard/users");
+    return {
+      status: "success",
+      message: "User updated successfully",
+    };
+  } catch (err) {
     return {
       status: "error",
-      message: "Invalid fields!",
+      message: "Something went wrong!",
     };
   }
-
-  // 1.) if the field is empty remove
-  const withoutEmptyStrData: any = {};
-  Object.keys(validatedFields.data).map((key) => {
-    // console.log(validatedFields.data[key as keyof EditUserType]);
-    const value = validatedFields.data[key as keyof EditUserType];
-    if (value !== "") {
-      withoutEmptyStrData[key as keyof EditUserType] = value;
-    }
-  });
-
-
-  // 2.) hash the password if present
-  if(withoutEmptyStrData.password){
-    const hashedPassword = await bcrypt.hash(withoutEmptyStrData.password,10);
-
-    withoutEmptyStrData.password = hashedPassword;
-  }
- 
-
-  
-
-  // 2.) update the db
-
- const updated =  await db.user.update({
-    where:{
-      id:withoutEmptyStrData.id
-    },
-    data:withoutEmptyStrData
-  })
-
-  revalidatePath("/dashboard/users");
-  return {
-    status: "success",
-    message: "User updated successfully",
-  };
-}catch(err){
-  console.log(err);
-  return {
-    status: "error",
-    message: "Something went wrong!",
-  }
 }
+
+export async function deleteUser(id: string) {
+  try {
+    await db.user.delete({
+      where: {
+        id,
+      },
+    });
+
+    revalidatePath("/dashboard/users");
+    return {
+      status: "success",
+      message: "User deleted successfully",
+    };
+  } catch (err) {
+    return {
+      status: "error",
+      message: "Something went wrong!",
+    };
+  }
 }
