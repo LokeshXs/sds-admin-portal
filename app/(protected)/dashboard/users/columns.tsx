@@ -69,7 +69,7 @@ export const columns: ColumnDef<TableUserData>[] = [
       const userinfo = row.original;
 
       return (
-        <EditUserForm userInfo={userinfo} />
+        <EditUserForm userInfo={userinfo} key={row.original.id} />
       );
     },
   },

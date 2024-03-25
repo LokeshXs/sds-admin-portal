@@ -6,7 +6,7 @@
  */
 
 export const publicRoutes:string[] = [
-  "/"
+  "/","/new-verification"
 ];
 
 
@@ -16,7 +16,7 @@ export const publicRoutes:string[] = [
  */
 
 export const authRoutes:string[] = [
-  "/signin"
+  "/signin","/reset-password","/new-password"
 ]
 
 /**

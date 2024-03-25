@@ -22,6 +22,13 @@ let usersData:UsersDataType = [];
   if (session?.user.role === "SUPERADMIN") {
     // If the logged-in user is SUPERADMIN, fetch data for both ADMIN and USER
     usersData = await db.user.findMany({
+      where: {
+        OR: [
+         
+          { role: "USER" },
+          {role:"ADMIN"}
+        ]
+      },
       select: {
         id: true,
         name: true,
@@ -36,7 +43,7 @@ let usersData:UsersDataType = [];
     usersData = await db.user.findMany({
       where: {
         OR: [
-          { role: "ADMIN" },
+         
           { role: "USER" }
         ]
       },

@@ -111,9 +111,11 @@ export default function SigninForm() {
 
       <p className="text-center mt-4">
         Forgot Password?{" "}
-        <Link href="/" className="underline text-primary font-medium">
+        <Button size="sm" variant="link" asChild={true} className="p-0 font-normal ">
+          <Link href="/reset-password">
           Click here
-        </Link>
+          </Link>
+        </Button>
       </p>
     </Form>
   );

@@ -3,6 +3,8 @@ import { createAdminSchema } from "@/lib/validationSchemas";
 import { z } from "zod";
 import db from "@/lib/db";
 import bcrypt from "bcryptjs";
+import { generateVerficationToken } from "@/lib/tokens";
+import { sendVerificationEmail } from "@/lib/mail";
 
 export async function createAdmin(values: z.infer<typeof createAdminSchema>) {
   try {
@@ -51,9 +53,16 @@ export async function createAdmin(values: z.infer<typeof createAdminSchema>) {
       },
     });
 
+    const verificationToken = await generateVerficationToken(email);
+
+    await sendVerificationEmail(
+      verificationToken.email,
+      verificationToken.token
+    );
+
     return {
       status: "success",
-      message: "Admin created successfully",
+      message: "Confirmation email sent!",
     };
   } catch (error) {
     return {

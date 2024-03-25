@@ -1,27 +1,21 @@
 import { signOut } from "@/auth";
 import DashboardLink from "@/components/DashboardLink";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import db from "@/lib/db";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { auth } from "@/auth";
-import Link from "next/link";
 import MobileDashboard from "@/components/MobileDashboard";
+import UserSetting from "@/components/UserSetting";
+import { SessionProvider } from "next-auth/react";
 
 interface Props {
   children: React.ReactNode;
 }
 
 export default async function DashboardLayout({ children }: Props) {
-
   const session = await auth();
-  console.log(session?.user?.name)
+  const loggedInUser = await db.user.findUnique({
+    where: { id: session?.user.id },
+  });
 
   const isSuperAdmin = session?.user.role === "SUPERADMIN";
 
@@ -29,19 +23,9 @@ export default async function DashboardLayout({ children }: Props) {
     <>
       <div className="w-full py-4 bg-muted flex justify-end px-6">
         <div className="flex gap-6 items-center">
-          <DropdownMenu>
-            <DropdownMenuTrigger>
-              <Avatar>
-                <AvatarImage src="https://github.com/shadcn.png" />
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuLabel>{session?.user?.name}</DropdownMenuLabel>
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
+          <SessionProvider>
+            <UserSetting key={loggedInUser?.id} userInfo={loggedInUser} />
+          </SessionProvider>
           <form
             action={async () => {
               "use server";
@@ -64,17 +48,19 @@ export default async function DashboardLayout({ children }: Props) {
           <DashboardLink href="/dashboard/createuser">
             Create User
           </DashboardLink>
-          {isSuperAdmin && 
-          <DashboardLink href="/dashboard/createadmin">
-          Create Admin
-        </DashboardLink>
-          }
+          {isSuperAdmin && (
+            <DashboardLink href="/dashboard/createadmin">
+              Create Admin
+            </DashboardLink>
+          )}
         </div>
       </nav>
 
       <MobileDashboard isSuperAdmin={isSuperAdmin} />
 
-      <div className="py-4 pl-[288px] max-md:pl-4 pr-4 max-md:pb-20">{children}</div>
+      <div className="py-4 pl-[288px] max-md:pl-4 pr-4 max-md:pb-20">
+        {children}
+      </div>
     </>
   );
 }

@@ -29,6 +29,7 @@ export const editUserSchema = z.object({
       /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()\-_=+{};:,<.>]).{8,}$|^$/,
       "Password is invalid"
     ),
+    email:z.string().email().optional(),
 });
 
 
@@ -45,3 +46,22 @@ export const createAdminSchema = z.object({
       "Password is invalid"
     ),
 });
+
+
+// PASSWORD RESET SCHEMA
+
+export const passwordResetSchema = z.object({
+  email:z.string().email()
+})
+
+
+// NEW PASSWORD SCHEMA
+export const newPasswordSchema = z.object({
+  password: z
+  .string()
+  .regex(
+    /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()\-_=+{};:,<.>]).{8,}$/,
+    "Password is invalid"
+  )
+})
+
