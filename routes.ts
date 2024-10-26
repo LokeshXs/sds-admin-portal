@@ -6,7 +6,7 @@
  */
 
 export const publicRoutes:string[] = [
-  "/","/new-verification"
+  "/","/new-verification","/api/gamelogin"
 ];
 
 

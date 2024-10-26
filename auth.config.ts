@@ -13,9 +13,9 @@ export default {
         if (validatedFields.success) {
           const { username, password } = validatedFields.data;
 
-          const user = await db.user.findUnique({
+          const user = await db.user.findFirst({
             where: {
-              username,
+              OR: [{ username: username }, { email: username }],
             },
           });
 
@@ -31,6 +31,8 @@ export default {
             password,
             user.password
           );
+
+          //  const isPasswordMatched = password === user.password;
 
           if (isPasswordMatched) {
             return user;

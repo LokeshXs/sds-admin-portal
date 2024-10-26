@@ -38,7 +38,6 @@ export async function generateResetPasswordToken(email: string) {
   const token = uuid();
   const expires = new Date(new Date().getTime() + 3600 * 1000);
   const existingToken = await getresetPasswordTokenByEmail(email);
-console.log(existingToken);
   if (existingToken) {
     const updatedResetToken = await db.passwordResetToken.update({
       where: {

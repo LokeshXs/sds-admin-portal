@@ -4,6 +4,8 @@ import { columns } from "./columns";
 import { auth } from "@/auth";
 import { UserRole } from "@prisma/client";
 
+export const dynamic = "force-dynamic"
+
 type  UsersDataType = {
   id: string;
   name: string;
@@ -14,6 +16,7 @@ type  UsersDataType = {
 }[]
 
 export default async function Users() {
+
   const session = await auth();
   console.log(session?.user.role);
 

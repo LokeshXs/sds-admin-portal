@@ -61,7 +61,7 @@ export default function SigninForm() {
               <FormLabel className="text-lg max-sm:text-base">Username</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Enter Username"
+                  placeholder="Username / Email"
                   type="text"
                   className="text-lg max-sm:text-base"
                   {...field}
