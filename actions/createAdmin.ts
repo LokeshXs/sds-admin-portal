@@ -49,7 +49,7 @@ export async function createAdmin(values: z.infer<typeof createAdminSchema>) {
         username,
         email,
         role: "ADMIN",
-        password: encryptedPassword,
+        password: password,
       },
     });
 

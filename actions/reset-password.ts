@@ -117,7 +117,7 @@ export async function newPassword(
         email,
       },
       data: {
-        password: hashedPassword,
+        password: password,
       },
     });
 

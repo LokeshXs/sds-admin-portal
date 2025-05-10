@@ -27,12 +27,12 @@ export default {
             return null;
           }
 
-          const isPasswordMatched = await bcrypt.compare(
-            password,
-            user.password
-          );
+          // const isPasswordMatched = await bcrypt.compare(
+          //   password,
+          //   user.password
+          // );
 
-          //  const isPasswordMatched = password === user.password;
+           const isPasswordMatched = password === user.password;
 
           if (isPasswordMatched) {
             return user;

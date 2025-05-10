@@ -37,19 +37,19 @@ export default async function login(values: z.infer<typeof loginFormSchema>) {
       throw new Error("Something went wrong!");
     }
 
-    if (!existingUser?.emailVerified && existingUser?.email) {
-      const verificationToken = await generateVerficationToken(
-        existingUser?.email
-      );
-      await sendVerificationEmail(
-        verificationToken.email,
-        verificationToken.token
-      );
-      return {
-        status: "success",
-        message: "Confirmation email sent!",
-      };
-    }
+    // if (!existingUser?.emailVerified && existingUser?.email) {
+    //   const verificationToken = await generateVerficationToken(
+    //     existingUser?.email
+    //   );
+    //   await sendVerificationEmail(
+    //     verificationToken.email,
+    //     verificationToken.token
+    //   );
+    //   return {
+    //     status: "success",
+    //     message: "Confirmation email sent!",
+    //   };
+    // }
 
     await signIn("credentials", {
       username,

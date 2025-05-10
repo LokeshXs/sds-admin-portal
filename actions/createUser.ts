@@ -52,7 +52,7 @@ export default async function createUser(
       data: {
         name,
         username,
-        password: encryptedPassword,
+        password: password,
       },
     });
 
@@ -124,15 +124,15 @@ export async function editUser(values: z.infer<typeof editUserSchema>) {
             message: "User with the email already exist",
           };
         }
-        // Put the verfied to null
-        await db.user.update({
-          where: {
-            id: withoutEmptyStrData.id,
-          },
-          data: {
-            emailVerified: null,
-          },
-        });
+        // // Put the verfied to null
+        // await db.user.update({
+        //   where: {
+        //     id: withoutEmptyStrData.id,
+        //   },
+        //   data: {
+        //     emailVerified: null,
+        //   },
+        // });
 
         // send verification email
 
